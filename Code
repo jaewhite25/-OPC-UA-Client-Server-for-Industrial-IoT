@@ -1,0 +1,19 @@
+# Server Example
+from opcua import Server
+import time
+import random
+
+server = Server()
+server.set_endpoint("opc.tcp://0.0.0.0:4840/freeopcua/server/")
+idx = server.register_namespace("IndustrialAutomation")
+obj = server.get_objects_node().add_object(idx, "Machine1")
+var = obj.add_variable(idx, "MotorSpeed", 0)
+var.set_writable()
+
+server.start()
+try:
+    while True:
+        var.set_value(random.randint(0, 100))
+        time.sleep(1)
+finally:
+    server.stop()
